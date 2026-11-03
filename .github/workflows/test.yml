@@ -65,7 +65,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        browser: [chromium, firefox]
+        browser: [chromium, firefox, webkit]
         node-version: [ 24 ]
     if: |
       (github.event_name != 'pull_request' || github.event.pull_request.draft != true) &&
@@ -83,6 +83,8 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps ${{ matrix.browser }}
       - run: npm run test:wpt:${{ matrix.browser }}
+      - name: Check native ${{ matrix.browser }} against its recorded expectations
+        run: npm run test:wpt:native:${{ matrix.browser }}
 
   changes:
     name: Detect changes
